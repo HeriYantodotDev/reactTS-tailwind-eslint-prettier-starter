@@ -1,6 +1,29 @@
-Table Of Content:
-
 # ReactTSTailwindWithLintingPrettier-starter
+
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [ReactTSTailwindWithLintingPrettier-starter](#reacttstailwindwithlintingprettier-starter)
+- [Vite](#vite)
+- [Eslint & Prettier](#eslint-prettier)
+  - [.vscode](#vscode)
+  - [Installing dependencies](#installing-dependencies)
+  - [`.eslintrc.cjs`](#eslintrccjs)
+  - [`.prettierrc.cjs`](#prettierrccjs)
+  - [Tailwind Config](#tailwind-config)
+  - [AirBNB](#airbnb)
+  - [vite.config.ts](#viteconfigts)
+- [Npm Script](#npm-script)
+- [Testing Environment](#testing-environment)
+  - [Installing dependency](#installing-dependency)
+  - [Excluding test files for production build](#excluding-test-files-for-production-build)
+  - [Adding sample test](#adding-sample-test)
+  - [Jest Configuration](#jest-configuration)
+  - [Test Case](#test-case)
+  - [Additional Dependencies](#additional-dependencies)
+
+<!-- TOC end -->
+
+<!-- TOC --><a name="reacttstailwindwithlintingprettier-starter"></a>
 
 This is a starter for a vite project with this set up:
 
@@ -9,6 +32,15 @@ This is a starter for a vite project with this set up:
 - TailwindCSS
 - ESLint & the recommendation setting
 - Prettier
+- Jest
+
+Tips for future me:
+
+- Do not copy paste package.json. Install it directly to ensure that we're using the latest version of the package
+- Only copy for the configuration file.
+- Read Documentation particularly for Jest Part!
+
+<!-- TOC --><a name="vite"></a>
 
 # Vite
 
@@ -20,7 +52,11 @@ Here's the full guide : [vite-guide](https://vitejs.dev/guide/)
 - Select a variant: It's either `TypeScript` or `TypeScript + SWC`
 - Use command from to the new folder and then `npm install`
 
+<!-- TOC --><a name="eslint-prettier"></a>
+
 # Eslint & Prettier
+
+<!-- TOC --><a name="vscode"></a>
 
 ## .vscode
 
@@ -36,6 +72,8 @@ First off all adding this into the folder `.vscode` - `settings.json`:
 
 Uncomment `.vscode` from gitignore to ensure that you still have this setup for TypeScript React when you removed this repo from your local.
 
+<!-- TOC --><a name="installing-dependencies"></a>
+
 ## Installing dependencies
 
 Let's start with this dependencies first:
@@ -43,6 +81,8 @@ Let's start with this dependencies first:
 ```
 npm install -D prettier prettier-plugin-tailwindcss tailwindcss @tailwindcss/forms @tailwindcss/typography eslint-plugin-prettier eslint-config-prettier @types/eslint-config-prettier
 ```
+
+<!-- TOC --><a name="eslintrccjs"></a>
 
 ## `.eslintrc.cjs`
 
@@ -80,6 +120,8 @@ module.exports = {
 };
 ```
 
+<!-- TOC --><a name="prettierrccjs"></a>
+
 ## `.prettierrc.cjs`
 
 Now let's add configuration for prettier:
@@ -109,6 +151,8 @@ When you save it, it changes to be like this:
 ```
 
 Restart the VS Code.
+
+<!-- TOC --><a name="tailwind-config"></a>
 
 ## Tailwind Config
 
@@ -147,6 +191,8 @@ export default {
 
 Done, we can use the tailwind now.
 
+<!-- TOC --><a name="airbnb"></a>
+
 ## AirBNB
 
 Here's the fun part, we can linting recommendation from AirBNB:
@@ -168,6 +214,8 @@ extends: [
   'airbnb/hooks',
 ],
 ```
+
+<!-- TOC --><a name="viteconfigts"></a>
 
 ## vite.config.ts
 
@@ -191,6 +239,8 @@ export default defineConfig({
 
 This is to ensure, EsLint is not throwing error about vite should not be in the development dependencies.
 
+<!-- TOC --><a name="npm-script"></a>
+
 # Npm Script
 
 Vite already provides the script for lint:
@@ -203,4 +253,137 @@ We can use it. Now let's add for `typecheck`:
 
 ```
 "typecheck": "tsc --noEmit",
+```
+
+<!-- TOC --><a name="testing-environment"></a>
+
+# Testing Environment
+
+Several References:
+
+- [jest-vite](https://hung.dev/posts/jest-vite).
+- [Hannah blog](https://dev.to/hannahadora/jest-testing-with-vite-and-react-typescript-4bap)
+
+And here's the step by step:
+
+<!-- TOC --><a name="installing-dependency"></a>
+
+## Installing dependency
+
+```
+npm i --save-dev jest jest-environment-jsdom ts-jest @types/jest @testing-library/user-event @testing-library/react @testing-library/jest-dom ts-node identity-obj-proxy
+```
+
+<!-- TOC --><a name="excluding-test-files-for-production-build"></a>
+
+## Excluding test files for production build
+
+- Create `tsconfig.prod.json`
+- Copy paste this setup
+  ```json
+  // tsconfig.prod.json
+  {
+    "extends": "./tsconfig",
+    "exclude": ["./src/__tests__/**", "./src/__mocks__/**", "./src/test-utils"]
+  }
+  ```
+- Change the package.json to use this config when build it.
+  ```json
+  // Package.json
+  -"build": "tsc && vite build",
+  +"build": "tsc -p tsconfig.prod.json && vite build",
+  ```
+- Adding test npm script:
+  ```json
+  "test": "NODE_ENV=test jest",
+  ```
+
+<!-- TOC --><a name="adding-sample-test"></a>
+
+## Adding sample test
+
+Create two folders:
+
+- `__tests__`
+- `__mocks__`
+
+`sample.test.tsx`
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import App from '../App';
+
+describe('Layout', () => {
+  test('should render the correct button text', () => {
+    render(<App />);
+    const button = screen.queryByRole('button');
+    expect(button).toBeInTheDocument();
+  });
+  test('should render the image', () => {
+    render(<App />);
+    const image = screen.queryByRole('img');
+    expect(image).toBeInTheDocument();
+  });
+});
+
+```
+
+<!-- TOC --><a name="jest-configuration"></a>
+
+## Jest Configuration
+
+Please create a file named `jest.config.ts`:
+
+```
+export default {
+  preset: 'ts-jest',
+  testEnvironment: 'jest-environment-jsdom',
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    // process `*.tsx` files with `ts-jest`
+  },
+  moduleNameMapper: {
+    '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/src/__mocks__/fileMock.ts',
+  },
+};
+```
+
+Remember in the `tsconfig.json`, please add this :
+
+```
+  "include": ["vite.config.ts",
+  ".eslintrc.cjs",
+  "src",
+  "tailwind.config.js",
+  "postcss.config.js",
+  "jest.config.ts"
+  ],
+```
+
+Now let's add mockfile.ts in the `__mocks__` folder
+
+```
+export default {
+  __esModule: true,
+  default: 'test-file-stub',
+};
+```
+
+Now let's run `npm run test` and it works.
+
+<!-- TOC --><a name="test-case"></a>
+
+## Test Case
+
+Please read this for more detail : [testing-library react](https://testing-library.com/docs/react-testing-library/example-intro)
+
+<!-- TOC --><a name="additional-dependencies"></a>
+
+## Additional Dependencies
+
+You will use these two packages a lot when you're running the test, so let's install it:
+
+```
+npm i -D msw whatwg-fetch
 ```
