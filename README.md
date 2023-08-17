@@ -426,7 +426,7 @@ export default {
 
 If you encounter a TypeScript or linting error, please restart your VSCode.
 
-Now let's run `npm run test`. If you passes the test that means your configuration is correct.
+Now let's run `npm run test`. If you pass the test that means your configuration is correct.
 
 If you encounter some warning message like this:
 
