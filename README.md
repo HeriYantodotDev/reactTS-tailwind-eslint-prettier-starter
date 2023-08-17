@@ -189,31 +189,41 @@ export default {
 
 ```
 
-Done, we can use the tailwind now.
+Got to './src/index.css' and add this :
+
+```
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Restart the VSCode. Done, we can use the tailwind now.
 
 <!-- TOC --><a name="airbnb"></a>
 
 ## AirBNB
 
-Here's the fun part, we can linting recommendation from AirBNB:
+Here's the fun part, we can use the linting recommendation from AirBNB:
 
 ```
 npm install -D eslint-config-airbnb eslint-config-airbnb-typescript
 ```
 
-Now let's add the configuration in the `.eslintrc.cjs`:
+We've already added those in the `.eslintrc.cjs`. However please ensure once again that you already use it like this:
 
 ```
 extends: [
-  'eslint:recommended',
-  'plugin:@typescript-eslint/recommended',
-  'plugin:react-hooks/recommended',
-  'plugin:prettier/recommended',
-  'airbnb',
-  'airbnb-typescript',
-  'airbnb/hooks',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
+    'airbnb',
+    'airbnb-typescript',
+    'airbnb/hooks',
+    'plugin:prettier/recommended',
 ],
 ```
+
+Please ensure that `'plugin:prettier/recommended',` would be at the bottom, so there will be no unnecessary conflict with esLint
 
 <!-- TOC --><a name="viteconfigts"></a>
 
@@ -238,6 +248,24 @@ export default defineConfig({
 ```
 
 This is to ensure, EsLint is not throwing error about vite should not be in the development dependencies.
+
+Please also add these to the `tsconfig.json` configuration:
+
+```
+  "include": ["vite.config.ts",
+  ".eslintrc.cjs",
+  "src",
+  "tailwind.config.js",
+  "postcss.config.js",
+  "jest.config.ts"
+  ],
+```
+
+Restart your VSCode, and now when you open `App.tsx` you'll see tons of linting errors. Don't panic! That means our set up works.
+
+## Fixing Error
+
+Go to the error one by one, and you modify your code.
 
 <!-- TOC --><a name="npm-script"></a>
 
@@ -295,7 +323,7 @@ npm i --save-dev jest jest-environment-jsdom ts-jest @types/jest @testing-librar
   ```
 - Adding test npm script:
   ```json
-  "test": "NODE_ENV=test jest",
+  "test": "NODE_ENV=test jest --verbose --watchAll",
   ```
 
 <!-- TOC --><a name="adding-sample-test"></a>
@@ -326,6 +354,32 @@ describe('Layout', () => {
     expect(image).toBeInTheDocument();
   });
 });
+
+```
+
+Also change your `App.tsx` to be like this for the sake of the test:
+
+```
+import { useState } from 'react';
+import img from '../public/vite.svg';
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <div className="mx-7 mb-10 mt-10 bg-red-500">
+        <div className="ml-10 mt-10 bg-indigo-600">Test</div>
+        <button type="button" onClick={() => setCount((countA) => countA + 1)}>
+          count is {count}
+        </button>
+        <img alt="hey" src={img} />
+      </div>
+    </div>
+  );
+}
+
+export default App;
 
 ```
 
@@ -361,7 +415,7 @@ Remember in the `tsconfig.json`, please add this :
   ],
 ```
 
-Now let's add mockfile.ts in the `__mocks__` folder
+Now let's add fileMock.ts in the `__mocks__` folder
 
 ```
 export default {
@@ -370,7 +424,20 @@ export default {
 };
 ```
 
-Now let's run `npm run test` and it works.
+If you encounter a TypeScript or linting error, please restart your VSCode.
+
+Now let's run `npm run test`. If you passes the test that means your configuration is correct.
+
+If you encounter some warning message like this:
+
+```
+If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
+```
+
+Go to the `tsconfig.json` and add this :
+`"esModuleInterop": true,`
+
+Run the test again, and ensure the warning message is gone.
 
 <!-- TOC --><a name="test-case"></a>
 
