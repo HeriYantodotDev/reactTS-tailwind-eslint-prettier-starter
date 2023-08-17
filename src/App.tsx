@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import img from '../public/vite.svg';
 
 function App() {
   const [count, setCount] = useState(0);
-  console.log('hasdf');
 
   return (
     <div>
@@ -11,6 +11,7 @@ function App() {
         <button type="button" onClick={() => setCount((countA) => countA + 1)}>
           count is {count}
         </button>
+        <img alt="hey" src={img} />
       </div>
     </div>
   );
